@@ -1,2 +1,1 @@
-# Singularity
- AP CSA Final project
+Final Project for AP CSA
