@@ -71,7 +71,7 @@ public class Projectile {
     }
 
     public void render(Spaceship ship) {
-        projectileTransform = ship.getScene().modelInstance.transform;
+        projectileTransform = scene.modelInstance.transform;
 
         // scene.modelInstance.transform.rotate(ship.getCurrPos(), 10f);
         // scene.modelInstance.transform.set(projectilePos);
