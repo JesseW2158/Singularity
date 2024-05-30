@@ -17,9 +17,9 @@ public class WeaponSystem extends Spaceship {
         projectiles.add(temp);
     }
     
-    public void render() {
+    public void render(Spaceship ship) {
         for(Projectile projectile : projectiles) {
-            projectile.render(this);
+            projectile.render(ship);
         }
     }
 

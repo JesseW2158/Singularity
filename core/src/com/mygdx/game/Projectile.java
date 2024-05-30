@@ -43,12 +43,15 @@ public class Projectile {
         scene = new Scene(new ModelInstance(modelBuilder.end()));
         sceneManager.addScene(scene);
 
-        projectileTransform = ship.getScene().modelInstance.transform;
-        projectileTransform.rotate(Vector3.Y, rotatedY);
+        projectileTransform = new Matrix4(ship.getScene().modelInstance.transform);
 
-        projectileTransform.translate(targPos);
+        System.out.println(projectileTransform);
+        System.err.println(ship.getPlayerTransform());
+
+        projectileTransform.rotate(Vector3.X, -2f);
         scene.modelInstance.transform.set(projectileTransform);
-        scene.modelInstance.transform.getTranslation(currPos);
+
+        // scene.modelInstance.transform.getTranslation(currPos);
         targPos.set(0, 0, 0);
     }
 
@@ -71,7 +74,7 @@ public class Projectile {
     }
 
     public void render(Spaceship ship) {
-        projectileTransform = scene.modelInstance.transform;
+        projectileTransform = ship.getScene().modelInstance.transform;
 
         // scene.modelInstance.transform.rotate(ship.getCurrPos(), 10f);
         // scene.modelInstance.transform.set(projectilePos);

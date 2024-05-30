@@ -100,7 +100,7 @@ public class Singularity extends Game {
 
 	private void processInput(float deltaTime) {
 		playerShip.handleInput(deltaTime);
-		playerShip.getWeaponSystem().render();
+		playerShip.getWeaponSystem().render(playerShip);
 		camera.updateCamera(playerShip);
 	}
 

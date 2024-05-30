@@ -29,6 +29,14 @@ public class Spaceship implements InputProcessor {
         this.sceneManager = sceneManager;
 		shipAsset = new GLTFLoader().load(Gdx.files.internal("models\\Player Spaceship.gltf"));
 		scene = new Scene(shipAsset.scene);
+
+        // targPos.z += 5000;
+
+		playerTransform.translate(targPos);
+		scene.modelInstance.transform.set(playerTransform);
+		scene.modelInstance.transform.getTranslation(currPos);
+		targPos.set(0, 0, 0);
+
         weaponSystem = new WeaponSystem();
     }
 
@@ -43,7 +51,7 @@ public class Spaceship implements InputProcessor {
 			Gdx.app.exit();
 		}
 
-		if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+		if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && !warping) {
 			speed += 1f;
 
             if(speed > 1000) {
@@ -51,7 +59,7 @@ public class Spaceship implements InputProcessor {
             }
         }
 
-		if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
+		if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) && !warping) {
 			speed += -1f;
             
             if(speed < 0) {
@@ -59,38 +67,36 @@ public class Spaceship implements InputProcessor {
             }
 		}
         
-        if(Gdx.input.isKeyPressed(Input.Keys.W)) {
+        if(Gdx.input.isKeyPressed(Input.Keys.W) && !warping) {
 			scene.modelInstance.transform.rotate(Vector3.X, -2f);
-			scene.modelInstance.transform.set(playerTransform);
 		}
 
-		if(Gdx.input.isKeyPressed(Input.Keys.A)) {
+		if(Gdx.input.isKeyPressed(Input.Keys.A) && !warping) {
 			scene.modelInstance.transform.rotate(Vector3.Y, 1f);
-			scene.modelInstance.transform.set(playerTransform);
 		}
 		
-		if(Gdx.input.isKeyPressed(Input.Keys.S)) {
+		if(Gdx.input.isKeyPressed(Input.Keys.S) && !warping) {
 			scene.modelInstance.transform.rotate(Vector3.X, 2f);
-			scene.modelInstance.transform.set(playerTransform);
 		}
 		
-		if(Gdx.input.isKeyPressed(Input.Keys.D)) {
+		if(Gdx.input.isKeyPressed(Input.Keys.D) && !warping) {
 			scene.modelInstance.transform.rotate(Vector3.Y, -1f);
-			scene.modelInstance.transform.set(playerTransform);
 		}
 
-		if(Gdx.input.isKeyPressed(Input.Keys.Q)) {
+		if(Gdx.input.isKeyPressed(Input.Keys.Q) && !warping) {
 			scene.modelInstance.transform.rotate(Vector3.Z, -3f);
-			scene.modelInstance.transform.set(playerTransform);
 		}
 
-		if(Gdx.input.isKeyPressed(Input.Keys.E)) {
+		if(Gdx.input.isKeyPressed(Input.Keys.E) && !warping) {
 			scene.modelInstance.transform.rotate(Vector3.Z, 3f);
-			scene.modelInstance.transform.set(playerTransform);
 		}
 
         if(warping) {
-            speed += 100f;
+            if(speed < 1) {
+                speed = 1;
+            }
+
+            speed *= 1.1;
 
             if(speed > 10000f) {
                 speed = 10000f;
@@ -118,7 +124,7 @@ public class Spaceship implements InputProcessor {
     public boolean keyUp(int keycode) {
         if(keycode == Input.Keys.SPACE) {
             warping = false;
-            speed = 0;
+            speed = 1;
         }
 
         return false;
