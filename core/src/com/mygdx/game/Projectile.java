@@ -45,13 +45,7 @@ public class Projectile {
 
         projectileTransform = new Matrix4(ship.getScene().modelInstance.transform);
 
-        System.out.println(projectileTransform);
-        System.err.println(ship.getPlayerTransform());
-
-        projectileTransform.rotate(Vector3.X, -2f);
         scene.modelInstance.transform.set(projectileTransform);
-
-        // scene.modelInstance.transform.getTranslation(currPos);
         targPos.set(0, 0, 0);
     }
 
