@@ -29,6 +29,7 @@ public class Spaceship implements InputProcessor {
         this.sceneManager = sceneManager;
 		shipAsset = new GLTFLoader().load(Gdx.files.internal("models\\Player Spaceship.gltf"));
 		scene = new Scene(shipAsset.scene);
+        weaponSystem = new WeaponSystem();
 
         // targPos.z += 5000;
 
@@ -36,8 +37,6 @@ public class Spaceship implements InputProcessor {
 		scene.modelInstance.transform.set(playerTransform);
 		scene.modelInstance.transform.getTranslation(currPos);
 		targPos.set(0, 0, 0);
-
-        weaponSystem = new WeaponSystem();
     }
 
     public void dispose() {

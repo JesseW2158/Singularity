@@ -1,7 +1,5 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttributes;
@@ -24,7 +22,6 @@ public class Projectile {
     private Vector3 targPos = new Vector3();
 
     private int x, y, z;
-    private float rotatedX, rotatedY, rotatedZ;
     private static int projectileNum = 0;
 
     public Projectile() {
@@ -43,39 +40,28 @@ public class Projectile {
         scene = new Scene(new ModelInstance(modelBuilder.end()));
         sceneManager.addScene(scene);
 
-        projectileTransform = new Matrix4(ship.getScene().modelInstance.transform);
+        // projectileTransform = new Matrix4(ship.getScene().modelInstance.transform);
+
+        System.out.println(projectileTransform);
+        System.out.println("------------------");
+        System.out.println(ship.getScene().modelInstance.transform);
+        
+        System.out.println(projectileTransform.rotate(Vector3.X, 1f));
 
         scene.modelInstance.transform.set(projectileTransform);
+        projectileTransform.translate(ship.getCurrPos());
         targPos.set(0, 0, 0);
     }
 
-    public void handleInput(float deltaTime) {
-        if(Gdx.input.isKeyPressed(Input.Keys.W)) {
-            rotatedX += -2f;
-        }
-
-        if(Gdx.input.isKeyPressed(Input.Keys.A)) {
-            rotatedY += 1f;
-        }
-
-        if(Gdx.input.isKeyPressed(Input.Keys.S)) {
-            rotatedX += 2f;
-        }
-
-        if(Gdx.input.isKeyPressed(Input.Keys.D)) {
-            rotatedY += -1f;
-        }
-    }
-
     public void render(Spaceship ship) {
-        projectileTransform = ship.getScene().modelInstance.transform;
+        // projectileTransform = ship.getScene().modelInstance.transform;
 
         // scene.modelInstance.transform.rotate(ship.getCurrPos(), 10f);
         // scene.modelInstance.transform.set(projectilePos);
         
-        projectileTransform.translate(targPos);
-		scene.modelInstance.transform.getTranslation(currPos);
-		targPos.set(0, 0, 0);
+        // projectileTransform.translate(targPos);
+		// scene.modelInstance.transform.getTranslation(currPos);
+		// targPos.set(0, 0, 0);
     }
 
     public int getX() {
@@ -140,29 +126,5 @@ public class Projectile {
 
     public void setTargPos(Vector3 targPos) {
         this.targPos = targPos;
-    }
-
-    public float getRotatedX() {
-        return rotatedX;
-    }
-
-    public void setRotatedX(float rotatedX) {
-        this.rotatedX = rotatedX;
-    }
-
-    public float getRotatedY() {
-        return rotatedY;
-    }
-
-    public void setRotatedY(float rotatedY) {
-        this.rotatedY = rotatedY;
-    }
-
-    public float getRotatedZ() {
-        return rotatedZ;
-    }
-
-    public void setRotatedZ(float rotatedZ) {
-        this.rotatedZ = rotatedZ;
     }
 }
