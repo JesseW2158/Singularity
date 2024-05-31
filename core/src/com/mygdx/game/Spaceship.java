@@ -1,8 +1,6 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 
@@ -11,32 +9,27 @@ import net.mgsx.gltf.scene3d.scene.Scene;
 import net.mgsx.gltf.scene3d.scene.SceneAsset;
 import net.mgsx.gltf.scene3d.scene.SceneManager;
 
-public class Spaceship implements InputProcessor {
-    private SceneManager sceneManager;
-    private SceneAsset shipAsset;
-    private Scene scene;
-    private WeaponSystem weaponSystem;
+public abstract class Spaceship {
+    protected SceneManager sceneManager;
+    protected SceneAsset shipAsset;
+    protected Scene scene;
+    protected WeaponSystem weaponSystem;
 
-    private boolean warping = false;
+    protected boolean warping = false;
+    protected boolean shooting = false;
+    
+    protected float speed = 0f;
+    protected float maxSpeed = 2000f;
 
-    private float speed = 0f;
-    private Matrix4 playerTransform = new Matrix4();
-    private Vector3 targPos = new Vector3();
-    private Vector3 currPos = new Vector3();
+    protected Matrix4 playerTransform = new Matrix4();
+    protected Vector3 targPos = new Vector3();
+    protected Vector3 currPos = new Vector3();
 
     public void create(SceneManager sceneManager) {
 		//model obtained from: https://free3d.com/3d-model/intergalactic-spaceships-version-2-blender-292-eevee-359585.html
         this.sceneManager = sceneManager;
 		shipAsset = new GLTFLoader().load(Gdx.files.internal("models\\Player Spaceship.gltf"));
 		scene = new Scene(shipAsset.scene);
-
-        // targPos.z += 5000;
-
-		playerTransform.translate(targPos);
-		scene.modelInstance.transform.set(playerTransform);
-		scene.modelInstance.transform.getTranslation(currPos);
-		targPos.set(0, 0, 0);
-
         weaponSystem = new WeaponSystem();
     }
 
@@ -44,130 +37,7 @@ public class Spaceship implements InputProcessor {
         shipAsset.dispose();
     }
 
-    public void handleInput(float deltaTime) {
-		playerTransform = scene.modelInstance.transform;
-
-        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-			Gdx.app.exit();
-		}
-
-		if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && !warping) {
-			speed += 1f;
-
-            if(speed > 1000) {
-                speed = 1000;
-            }
-        }
-
-		if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) && !warping) {
-			speed += -1f;
-            
-            if(speed < 0) {
-                speed = 0;
-            }
-		}
-        
-        if(Gdx.input.isKeyPressed(Input.Keys.W) && !warping) {
-			scene.modelInstance.transform.rotate(Vector3.X, -2f);
-		}
-
-		if(Gdx.input.isKeyPressed(Input.Keys.A) && !warping) {
-			scene.modelInstance.transform.rotate(Vector3.Y, 1f);
-		}
-		
-		if(Gdx.input.isKeyPressed(Input.Keys.S) && !warping) {
-			scene.modelInstance.transform.rotate(Vector3.X, 2f);
-		}
-		
-		if(Gdx.input.isKeyPressed(Input.Keys.D) && !warping) {
-			scene.modelInstance.transform.rotate(Vector3.Y, -1f);
-		}
-
-		if(Gdx.input.isKeyPressed(Input.Keys.Q) && !warping) {
-			scene.modelInstance.transform.rotate(Vector3.Z, -3f);
-		}
-
-		if(Gdx.input.isKeyPressed(Input.Keys.E) && !warping) {
-			scene.modelInstance.transform.rotate(Vector3.Z, 3f);
-		}
-
-        if(warping) {
-            if(speed < 1) {
-                speed = 1;
-            }
-
-            speed *= 1.1;
-
-            if(speed > 10000f) {
-                speed = 10000f;
-            }
-        }
-
-        targPos.z += speed * deltaTime;
-
-		playerTransform.translate(targPos);
-		scene.modelInstance.transform.set(playerTransform);
-		scene.modelInstance.transform.getTranslation(currPos);
-		targPos.set(0, 0, 0);
-    }
-    
-    @Override
-    public boolean keyDown(int keycode) {
-        if(keycode == Input.Keys.SPACE && !weaponSystem.isInCombat()) {
-            warping = true;
-        }
-
-        return false;
-    }
-
-    @Override
-    public boolean keyUp(int keycode) {
-        if(keycode == Input.Keys.SPACE) {
-            warping = false;
-            speed = 1;
-        }
-
-        return false;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if(button == Input.Buttons.LEFT) {
-            weaponSystem.createLasers(sceneManager, this);
-        }
-
-        return false;
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(float amountX, float amountY) {
-        return false;
-    }
+    abstract void handleInput(float deltaTime);
 
     //GETTERS AND SETTERS
 

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cubemap;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector3;
 
 import net.mgsx.gltf.loaders.gltf.GLTFLoader;
 import net.mgsx.gltf.scene3d.attributes.PBRCubemapAttribute;
@@ -20,8 +21,8 @@ import net.mgsx.gltf.scene3d.utils.IBLBuilder;
 public class Singularity extends Game {
 	public SceneManager sceneManager;
 	private GameCamera camera;
-	private Spaceship playerShip;
-	private Spaceship referenceship;
+	private Player player;
+	private Enemy referenceship;
 	private Cubemap diffuseCubemap;
 	private Cubemap environmentCubemap;
 	private Cubemap specularCubemap;
@@ -35,17 +36,23 @@ public class Singularity extends Game {
 	public void create() {
 		// create scene
 		sceneManager = new SceneManager();
-		playerShip = new Spaceship();
-		referenceship = new Spaceship();
+		player = new Player();
+		referenceship = new Enemy();
+
+		SceneAsset planet = new GLTFLoader().load(Gdx.files.internal("models\\Mars.gltf"));
+		Scene planetScene = new Scene(planet.scene);
 
 		SceneAsset mars = new GLTFLoader().load(Gdx.files.internal("models\\Mars.gltf"));
 		Scene marsScene = new Scene(mars.scene);
 
-		playerShip.create(sceneManager);
+		marsScene.modelInstance.transform.translate(new Vector3(5_000, 0, 0));
+
+		player.create(sceneManager);
 		referenceship.create(sceneManager);
 
-		sceneManager.addScene(playerShip.getScene());
+		sceneManager.addScene(player.getScene());
 		sceneManager.addScene(referenceship.getScene());
+		sceneManager.addScene(planetScene);
 		sceneManager.addScene(marsScene);
 
 		camera = new GameCamera();
@@ -89,7 +96,7 @@ public class Singularity extends Game {
 	public void render() {
 		float deltaTime = Gdx.graphics.getDeltaTime();
 
-		Gdx.input.setInputProcessor(playerShip);
+		Gdx.input.setInputProcessor(player);
 		processInput(deltaTime);
 
 		// render
@@ -99,15 +106,15 @@ public class Singularity extends Game {
 	}
 
 	private void processInput(float deltaTime) {
-		playerShip.handleInput(deltaTime);
-		playerShip.getWeaponSystem().render(playerShip);
-		camera.updateCamera(playerShip);
+		player.handleInput(deltaTime);
+		player.getWeaponSystem().render(player);
+		camera.updateCamera(player);
 	}
 
 	@Override
 	public void dispose() {
 		sceneManager.dispose();
-		playerShip.dispose();
+		player.dispose();
 		environmentCubemap.dispose();
 		diffuseCubemap.dispose();
 		specularCubemap.dispose();
@@ -116,84 +123,4 @@ public class Singularity extends Game {
 	}
 
 	//GETTERS AND SETTERS
-
-	public SceneManager getSceneManager() {
-		return sceneManager;
-	}
-
-	public void setSceneManager(SceneManager sceneManager) {
-		this.sceneManager = sceneManager;
-	}
-
-	public GameCamera getCamera() {
-		return camera;
-	}
-
-	public void setCamera(GameCamera camera) {
-		this.camera = camera;
-	}
-
-	public Spaceship getPlayerShip() {
-		return playerShip;
-	}
-
-	public void setPlayerShip(Spaceship playerShip) {
-		this.playerShip = playerShip;
-	}
-
-	public Spaceship getReferenceship() {
-		return referenceship;
-	}
-
-	public void setReferenceship(Spaceship referenceship) {
-		this.referenceship = referenceship;
-	}
-
-	public Cubemap getDiffuseCubemap() {
-		return diffuseCubemap;
-	}
-
-	public void setDiffuseCubemap(Cubemap diffuseCubemap) {
-		this.diffuseCubemap = diffuseCubemap;
-	}
-
-	public Cubemap getEnvironmentCubemap() {
-		return environmentCubemap;
-	}
-
-	public void setEnvironmentCubemap(Cubemap environmentCubemap) {
-		this.environmentCubemap = environmentCubemap;
-	}
-
-	public Cubemap getSpecularCubemap() {
-		return specularCubemap;
-	}
-
-	public void setSpecularCubemap(Cubemap specularCubemap) {
-		this.specularCubemap = specularCubemap;
-	}
-
-	public Texture getBrdfLUT() {
-		return brdfLUT;
-	}
-
-	public void setBrdfLUT(Texture brdfLUT) {
-		this.brdfLUT = brdfLUT;
-	}
-
-	public SceneSkybox getSkybox() {
-		return skybox;
-	}
-
-	public void setSkybox(SceneSkybox skybox) {
-		this.skybox = skybox;
-	}
-
-	public DirectionalLightEx getLight() {
-		return light;
-	}
-
-	public void setLight(DirectionalLightEx light) {
-		this.light = light;
-	}
 }
