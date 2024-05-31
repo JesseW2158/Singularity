@@ -35,33 +35,26 @@ public class Projectile {
         Material material = new Material();
         material.set(PBRColorAttribute.createBaseColorFactor(Color.RED));
         MeshPartBuilder builder = modelBuilder.part("Projectile: " + projectileNum, GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, material);
-        BoxShapeBuilder.build(builder, ship.getCurrPos().x, ship.getCurrPos().y - 1f, ship.getCurrPos().z, 1f,1f,5f);
+        BoxShapeBuilder.build(builder, 0, 0, 0, 1f,1f,5f);
 
         scene = new Scene(new ModelInstance(modelBuilder.end()));
         sceneManager.addScene(scene);
 
-        // projectileTransform = new Matrix4(ship.getScene().modelInstance.transform);
+        projectileTransform = new Matrix4(ship.getScene().modelInstance.transform);
+        targPos.z += -20f;
+        targPos.y += -2f;
 
-        System.out.println(projectileTransform);
-        System.out.println("------------------");
-        System.out.println(ship.getScene().modelInstance.transform);
-        
-        System.out.println(projectileTransform.rotate(Vector3.X, 1f));
-
+        projectileTransform.translate(targPos);
         scene.modelInstance.transform.set(projectileTransform);
-        projectileTransform.translate(ship.getCurrPos());
         targPos.set(0, 0, 0);
     }
 
     public void render(Spaceship ship) {
-        // projectileTransform = ship.getScene().modelInstance.transform;
+        targPos.z += 25f;
 
-        // scene.modelInstance.transform.rotate(ship.getCurrPos(), 10f);
-        // scene.modelInstance.transform.set(projectilePos);
-        
-        // projectileTransform.translate(targPos);
-		// scene.modelInstance.transform.getTranslation(currPos);
-		// targPos.set(0, 0, 0);
+        projectileTransform.translate(targPos);
+		scene.modelInstance.transform.set(projectileTransform);
+		targPos.set(0, 0, 0);
     }
 
     public int getX() {

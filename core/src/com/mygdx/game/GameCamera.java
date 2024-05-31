@@ -25,8 +25,8 @@ public class GameCamera {
 
     public GameCamera() {
         perspectiveCamera = new PerspectiveCamera(60f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		perspectiveCamera.near = 5f;
-		perspectiveCamera.far = 100000;
+		perspectiveCamera.near = 10f;
+		perspectiveCamera.far = 10000000;
 		perspectiveCamera.position.set(0, 0, 4f);
 
 		cameraController = new FirstPersonCameraController(perspectiveCamera);

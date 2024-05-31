@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import net.mgsx.gltf.scene3d.scene.SceneManager;
 
-public class WeaponSystem extends Spaceship {
+public class WeaponSystem extends Player {
     private boolean inRange = false;
     private boolean inCombat = false;
 
@@ -17,7 +17,7 @@ public class WeaponSystem extends Spaceship {
         projectiles.add(temp);
     }
     
-    public void render(Spaceship ship) {        
+    public void render(Spaceship ship) {   
         for(Projectile projectile : projectiles) {
             projectile.render(ship);
         }
