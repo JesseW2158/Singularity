@@ -17,10 +17,19 @@ public class WeaponSystem extends Player {
         projectiles.add(temp);
     }
     
-    public void render(Spaceship ship) {   
+    @SuppressWarnings("unlikely-arg-type")
+    public void render(Spaceship ship) {
+        ArrayList<Projectile> temp = new ArrayList<>();
+
         for(Projectile projectile : projectiles) {
-            projectile.render(ship);
+            if(projectile.getTime() > 120) {
+                temp.add(projectile);
+            } else {
+                projectile.render();
+            }
         }
+
+        projectiles.remove(temp);
     }
 
     public void calculateIfInRange(Spaceship target) {
@@ -43,5 +52,13 @@ public class WeaponSystem extends Player {
 
     public void setInCombat(boolean inCombat) {
         this.inCombat = inCombat;
+    }
+
+    public ArrayList<Projectile> getProjectiles() {
+        return projectiles;
+    }
+
+    public void setProjectiles(ArrayList<Projectile> projectiles) {
+        this.projectiles = projectiles;
     }
 }

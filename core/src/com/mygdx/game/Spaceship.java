@@ -19,7 +19,7 @@ public abstract class Spaceship {
     protected boolean shooting = false;
     
     protected float speed = 0f;
-    protected float maxSpeed = 2000f;
+    protected float maxSpeed = 100f;
 
     protected Matrix4 playerTransform = new Matrix4();
     protected Vector3 targPos = new Vector3();
@@ -36,8 +36,6 @@ public abstract class Spaceship {
     public void dispose() {
         shipAsset.dispose();
     }
-
-    abstract void handleInput(float deltaTime);
 
     //GETTERS AND SETTERS
 

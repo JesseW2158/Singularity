@@ -21,6 +21,8 @@ public class Projectile {
     private Vector3 currPos = new Vector3();
     private Vector3 targPos = new Vector3();
 
+    private float time = 0;
+
     private int x, y, z;
     private static int projectileNum = 0;
 
@@ -41,16 +43,18 @@ public class Projectile {
         sceneManager.addScene(scene);
 
         projectileTransform = new Matrix4(ship.getScene().modelInstance.transform);
-        targPos.z += -20f;
         targPos.y += -2f;
+        targPos.z += -5f;
 
         projectileTransform.translate(targPos);
         scene.modelInstance.transform.set(projectileTransform);
         targPos.set(0, 0, 0);
     }
 
-    public void render(Spaceship ship) {
-        targPos.z += 25f;
+    public void render() {
+        time += 1;
+
+        targPos.z += 10f;
 
         projectileTransform.translate(targPos);
 		scene.modelInstance.transform.set(projectileTransform);
@@ -119,5 +123,13 @@ public class Projectile {
 
     public void setTargPos(Vector3 targPos) {
         this.targPos = targPos;
+    }
+
+    public float getTime() {
+        return time;
+    }
+
+    public void setTime(float time) {
+        this.time = time;
     }
 }

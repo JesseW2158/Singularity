@@ -20,9 +20,7 @@ public class Player extends Spaceship implements InputProcessor {
 		targPos.set(0, 0, 0);
     }
 
-    @Override
-    void handleInput(float deltaTime) {
-        System.out.println(speed);
+    public void handleInput(float deltaTime) {
         playerTransform = scene.modelInstance.transform;
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
@@ -30,7 +28,7 @@ public class Player extends Spaceship implements InputProcessor {
 		}
 
 		if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && !warping) {
-			speed += 10f;
+			speed += 1f;
 
             if(speed > maxSpeed) {
                 speed = maxSpeed;
@@ -38,7 +36,7 @@ public class Player extends Spaceship implements InputProcessor {
         }
 
 		if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) && !warping) {
-			speed += -20f;
+			speed += -2f;
             
             if(speed < 0) {
                 speed = 0;
@@ -76,8 +74,8 @@ public class Player extends Spaceship implements InputProcessor {
 
             speed *= 1.1;
 
-            if(speed > 100000f) {
-                speed = 100000f;
+            if(speed > 10000f) {
+                speed = 10000f;
             }
         }
 

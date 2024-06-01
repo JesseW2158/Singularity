@@ -1,5 +1,7 @@
 package com.mygdx.game;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -20,16 +22,18 @@ import net.mgsx.gltf.scene3d.utils.IBLBuilder;
 
 public class Singularity extends Game {
 	public SceneManager sceneManager;
+
 	private GameCamera camera;
 	private Player player;
-	private Enemy referenceship;
+	
 	private Cubemap diffuseCubemap;
 	private Cubemap environmentCubemap;
 	private Cubemap specularCubemap;
 	private Texture brdfLUT;
 	private SceneSkybox skybox;
 	private DirectionalLightEx light;
-	
+
+	private ArrayList<Enemy> enemies = new ArrayList<>();
 
 	//quick start from https://github.com/mgsx-dev/gdx-gltf and following https://www.youtube.com/watch?v=e-3OMXY9bDU&t=624s&ab_channel=JamesTKhan's multi-video guide
 	@Override
@@ -37,7 +41,10 @@ public class Singularity extends Game {
 		// create scene
 		sceneManager = new SceneManager();
 		player = new Player();
-		referenceship = new Enemy();
+
+		for(int i = 0; i < (float)(Math.random() * 10) + 1; i++) {
+			enemies.add(new Enemy());
+		}
 
 		SceneAsset planet = new GLTFLoader().load(Gdx.files.internal("models\\Mars.gltf"));
 		Scene planetScene = new Scene(planet.scene);
@@ -45,13 +52,16 @@ public class Singularity extends Game {
 		SceneAsset mars = new GLTFLoader().load(Gdx.files.internal("models\\Mars.gltf"));
 		Scene marsScene = new Scene(mars.scene);
 
-		marsScene.modelInstance.transform.translate(new Vector3(5_000, 0, 0));
+		marsScene.modelInstance.transform.translate(new Vector3(25_000, 0, 0));
 
 		player.create(sceneManager);
-		referenceship.create(sceneManager);
+		
+		for(Enemy enemy : enemies) {
+			enemy.create(sceneManager, player);
+			sceneManager.addScene(enemy.getScene());
+		}
 
 		sceneManager.addScene(player.getScene());
-		sceneManager.addScene(referenceship.getScene());
 		sceneManager.addScene(planetScene);
 		sceneManager.addScene(marsScene);
 
@@ -109,6 +119,10 @@ public class Singularity extends Game {
 		player.handleInput(deltaTime);
 		player.getWeaponSystem().render(player);
 		camera.updateCamera(player);
+
+		for(Enemy enemy : enemies) {
+			enemy.handleInput(player, deltaTime);
+		}
 	}
 
 	@Override
