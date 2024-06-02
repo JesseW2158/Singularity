@@ -1,29 +1,24 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.VertexAttributes;
-import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
-import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.BoxShapeBuilder;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 
-import net.mgsx.gltf.scene3d.attributes.PBRColorAttribute;
+import net.mgsx.gltf.loaders.gltf.GLTFLoader;
 import net.mgsx.gltf.scene3d.scene.Scene;
+import net.mgsx.gltf.scene3d.scene.SceneAsset;
 import net.mgsx.gltf.scene3d.scene.SceneManager;
-
 public class Projectile {
+    private SceneAsset sceneAsset;
     private Scene scene;
     private Matrix4 projectileTransform = new Matrix4();
     private Vector3 currPos = new Vector3();
     private Vector3 targPos = new Vector3();
 
+    private boolean isDisposed = false;
+
     private float time = 0;
 
-    private int x, y, z;
     private static int projectileNum = 0;
 
     public Projectile() {
@@ -31,15 +26,8 @@ public class Projectile {
     }
 
     public void create(Spaceship ship, SceneManager sceneManager) {
-        ModelBuilder modelBuilder = new ModelBuilder();
-        modelBuilder.begin();
-
-        Material material = new Material();
-        material.set(PBRColorAttribute.createBaseColorFactor(Color.RED));
-        MeshPartBuilder builder = modelBuilder.part("Projectile: " + projectileNum, GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, material);
-        BoxShapeBuilder.build(builder, 0, 0, 0, 1f,1f,5f);
-
-        scene = new Scene(new ModelInstance(modelBuilder.end()));
+        sceneAsset = new GLTFLoader().load(Gdx.files.internal("models\\laser.gltf"));
+        scene = new Scene(sceneAsset.scene);
         sceneManager.addScene(scene);
 
         projectileTransform = new Matrix4(ship.getScene().modelInstance.transform);
@@ -48,41 +36,37 @@ public class Projectile {
 
         projectileTransform.translate(targPos);
         scene.modelInstance.transform.set(projectileTransform);
+        scene.modelInstance.transform.getTranslation(currPos);
         targPos.set(0, 0, 0);
     }
 
     public void render() {
         time += 1;
 
-        targPos.z += 10f;
+        targPos.z += 15f;
 
         projectileTransform.translate(targPos);
 		scene.modelInstance.transform.set(projectileTransform);
+        scene.modelInstance.transform.getTranslation(currPos);
 		targPos.set(0, 0, 0);
     }
 
-    public int getX() {
-        return x;
+    public void dispose() {
+        Matrix4 temp = new Matrix4();
+        Vector3 trash = new Vector3(1_000_000_000, 1_000_000_000, 1_000_000_000);
+
+        temp.translate(trash);
+        scene.modelInstance.transform.set(temp);
+
+        isDisposed = true;
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public int getZ() {
-        return z;
-    }
-
-    public void setZ(int z) {
-        this.z = z;
+    public boolean hasCollided(Spaceship ship) {
+        if(Math.abs(ship.getCurrPos().dst(this.currPos)) < 3f) {
+            return true;
+        }
+    
+        return false;
     }
 
     public static int getProjectileNum() {
@@ -131,5 +115,21 @@ public class Projectile {
 
     public void setTime(float time) {
         this.time = time;
+    }
+
+    public SceneAsset getSceneAsset() {
+        return sceneAsset;
+    }
+
+    public void setSceneAsset(SceneAsset sceneAsset) {
+        this.sceneAsset = sceneAsset;
+    }
+
+    public boolean isDisposed() {
+        return isDisposed;
+    }
+
+    public void setDisposed(boolean isDisposed) {
+        this.isDisposed = isDisposed;
     }
 }

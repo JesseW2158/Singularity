@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import net.mgsx.gltf.scene3d.scene.SceneManager;
 
-public class WeaponSystem extends Player {
+public class WeaponSystem extends Spaceship {
     private boolean inRange = false;
     private boolean inCombat = false;
 
@@ -17,25 +17,30 @@ public class WeaponSystem extends Player {
         projectiles.add(temp);
     }
     
-    @SuppressWarnings("unlikely-arg-type")
-    public void render(Spaceship ship) {
+    public void render(ArrayList<? extends Spaceship> ships, SceneManager sceneManager, boolean enemyFire) {
         ArrayList<Projectile> temp = new ArrayList<>();
 
         for(Projectile projectile : projectiles) {
-            if(projectile.getTime() > 120) {
+            if(!projectile.isDisposed() && projectile.getTime() > 120f) {
                 temp.add(projectile);
             } else {
                 projectile.render();
+                
+                for(Spaceship ship : ships) {
+                    if(ship instanceof Player) {
+                        System.out.println(ship.hp);
+                    }
+                    if(projectile.hasCollided(ship)) {
+                        ship.setHp(ship.getHp() - 1);
+                    }
+                }
             }
         }
-
-        projectiles.remove(temp);
-    }
-
-    public void calculateIfInRange(Spaceship target) {
-        double distance = Math.pow(target.getCurrPos().x - this.getCurrPos().x, 2) + Math.pow(target.getCurrPos().y - this.getCurrPos().y, 2) + Math.pow(target.getCurrPos().z - this.getCurrPos().z, 2);
-
-        inRange = distance < 1500;
+        
+        for(Projectile projectile : temp) {
+            projectiles.remove(projectile);
+            projectile.dispose();
+        }
     }
 
     public boolean isInRange() {

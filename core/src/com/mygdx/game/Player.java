@@ -11,7 +11,7 @@ public class Player extends Spaceship implements InputProcessor {
     @Override
     public void create(SceneManager sceneManager) {
         super.create(sceneManager);
-
+        
         targPos.z += 5000;
 
 		playerTransform.translate(targPos);
@@ -89,6 +89,8 @@ public class Player extends Spaceship implements InputProcessor {
 		scene.modelInstance.transform.set(playerTransform);
 		scene.modelInstance.transform.getTranslation(currPos);
 		targPos.set(0, 0, 0);
+
+        destroyedShipRemove();
     }
     
     @Override

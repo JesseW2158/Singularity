@@ -37,18 +37,14 @@ public class GameCamera {
     	float offsetX = (float) (horizontalDistance * Math.sin(Math.toRadians(angleAroundPlayer)));
         float offsetZ = (float) (horizontalDistance * Math.cos(Math.toRadians(angleAroundPlayer)));
 
-        //Must find a way to calculate the rotation of the camera based off of ship's rotation
-
 		perspectiveCamera.position.x = currPos.x - offsetX;
 		perspectiveCamera.position.z = currPos.z - offsetZ;
 		perspectiveCamera.position.y = currPos.y + verticalDistance;
 	}
 
     public void calculateAngleAroundPlayer() {
-		if(cameraMode == CameraMode.FREE_LOOK) {
-			float angleChange = Gdx.input.getDeltaX() * CAMERA_ANGLE_AROUND_PLAYER_FACTOR;
-			angleAroundPlayer -= angleChange;
-		}
+        float angleChange = Gdx.input.getDeltaX() * CAMERA_ANGLE_AROUND_PLAYER_FACTOR;  
+        angleAroundPlayer -= angleChange;
 	}
 
     public void calculatePitch() {
@@ -63,14 +59,14 @@ public class GameCamera {
 	public float calculateHorizontalDistance() {
 		return (float) (distanceFromPlayer * Math.cos(Math.toRadians(camPitch)));
 	}
-    
-    public void updateCamera(Spaceship playerShip) {
+
+    public void updateCamera(Player player) {
 		calculatePitch();
 		calculateAngleAroundPlayer();
-		calculateCameraPosition(playerShip.getCurrPos(), calculateHorizontalDistance(), calculateVerticalDistance());
+        calculateCameraPosition(player.getCurrPos(), calculateHorizontalDistance(), calculateVerticalDistance());
 
 		perspectiveCamera.up.set(Vector3.Y);
-		perspectiveCamera.lookAt(playerShip.getCurrPos());
+		perspectiveCamera.lookAt(player.getCurrPos());
 		perspectiveCamera.update();
 	}
 

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cubemap;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 
 import net.mgsx.gltf.loaders.gltf.GLTFLoader;
@@ -15,13 +16,12 @@ import net.mgsx.gltf.scene3d.attributes.PBRCubemapAttribute;
 import net.mgsx.gltf.scene3d.attributes.PBRTextureAttribute;
 import net.mgsx.gltf.scene3d.lights.DirectionalLightEx;
 import net.mgsx.gltf.scene3d.scene.Scene;
-import net.mgsx.gltf.scene3d.scene.SceneAsset;
 import net.mgsx.gltf.scene3d.scene.SceneManager;
 import net.mgsx.gltf.scene3d.scene.SceneSkybox;
 import net.mgsx.gltf.scene3d.utils.IBLBuilder;
 
 public class Singularity extends Game {
-	public SceneManager sceneManager;
+	private SceneManager sceneManager;
 
 	private GameCamera camera;
 	private Player player;
@@ -34,6 +34,7 @@ public class Singularity extends Game {
 	private DirectionalLightEx light;
 
 	private ArrayList<Enemy> enemies = new ArrayList<>();
+	private ArrayList<Scene> planets = new ArrayList<>();
 
 	//quick start from https://github.com/mgsx-dev/gdx-gltf and following https://www.youtube.com/watch?v=e-3OMXY9bDU&t=624s&ab_channel=JamesTKhan's multi-video guide
 	@Override
@@ -41,29 +42,12 @@ public class Singularity extends Game {
 		// create scene
 		sceneManager = new SceneManager();
 		player = new Player();
-
-		for(int i = 0; i < (float)(Math.random() * 10) + 1; i++) {
-			enemies.add(new Enemy());
-		}
-
-		SceneAsset planet = new GLTFLoader().load(Gdx.files.internal("models\\Mars.gltf"));
-		Scene planetScene = new Scene(planet.scene);
-
-		SceneAsset mars = new GLTFLoader().load(Gdx.files.internal("models\\Mars.gltf"));
-		Scene marsScene = new Scene(mars.scene);
-
-		marsScene.modelInstance.transform.translate(new Vector3(25_000, 0, 0));
-
+		//creating and adding player to world
 		player.create(sceneManager);
-		
-		for(Enemy enemy : enemies) {
-			enemy.create(sceneManager, player);
-			sceneManager.addScene(enemy.getScene());
-		}
-
 		sceneManager.addScene(player.getScene());
-		sceneManager.addScene(planetScene);
-		sceneManager.addScene(marsScene);
+
+		spawnPlanets();
+		spawnEnemies();
 
 		camera = new GameCamera();
 
@@ -106,6 +90,7 @@ public class Singularity extends Game {
 	public void render() {
 		float deltaTime = Gdx.graphics.getDeltaTime();
 
+		//Basically like setting keylistener to player
 		Gdx.input.setInputProcessor(player);
 		processInput(deltaTime);
 
@@ -117,7 +102,7 @@ public class Singularity extends Game {
 
 	private void processInput(float deltaTime) {
 		player.handleInput(deltaTime);
-		player.getWeaponSystem().render(player);
+		player.getWeaponSystem().render(enemies, sceneManager, false);
 		camera.updateCamera(player);
 
 		for(Enemy enemy : enemies) {
@@ -136,5 +121,33 @@ public class Singularity extends Game {
 		skybox.dispose();
 	}
 
-	//GETTERS AND SETTERS
+	private void spawnPlanets() {
+		for(int i = 0; i < (float)(Math.random()) * 5 + 1; i++) {
+			planets.add(new Scene(new GLTFLoader().load(Gdx.files.internal("models\\Planet.gltf")).scene));
+		}
+
+		for(Scene planet : planets) {
+			sceneManager.addScene(planet);
+
+			Matrix4 temp = new Matrix4();
+			Vector3 pos = new Vector3((float)(Math.random() * 25_000), (float)(Math.random() * 25_000), (float)(Math.random() * 25_000));
+			temp.translate(pos);
+
+			planet.modelInstance.transform.set(temp);
+		}
+	}
+
+	private void spawnEnemies() {
+		Matrix4 worldPos = new Matrix4();
+		worldPos.translate(new Vector3((float)(Math.random() * 25_000), (float)(Math.random() * 25_000), (float)(Math.random() * 25_000)));
+
+		for(int i = 0; i < (float)(Math.random() * 5) + 5; i++) {
+			enemies.add(new Enemy(player.playerTransform));
+		}
+		
+		for(Enemy enemy : enemies) {
+			enemy.create(sceneManager, player);
+			sceneManager.addScene(enemy.getScene());
+		}
+	}
 }

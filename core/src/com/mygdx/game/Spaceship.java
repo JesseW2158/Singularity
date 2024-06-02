@@ -13,6 +13,7 @@ public abstract class Spaceship {
     protected SceneManager sceneManager;
     protected SceneAsset shipAsset;
     protected Scene scene;
+
     protected WeaponSystem weaponSystem;
 
     protected boolean warping = false;
@@ -20,6 +21,8 @@ public abstract class Spaceship {
     
     protected float speed = 0f;
     protected float maxSpeed = 100f;
+
+    protected int hp = 100;
 
     protected Matrix4 playerTransform = new Matrix4();
     protected Vector3 targPos = new Vector3();
@@ -31,6 +34,20 @@ public abstract class Spaceship {
 		shipAsset = new GLTFLoader().load(Gdx.files.internal("models\\Player Spaceship.gltf"));
 		scene = new Scene(shipAsset.scene);
         weaponSystem = new WeaponSystem();
+    }
+
+    public void gameDispose() {
+        Matrix4 temp = new Matrix4();
+        Vector3 trash = new Vector3(1_000_000_000, 1_000_000_000, 1_000_000_000);
+
+        temp.translate(trash);
+        scene.modelInstance.transform.set(temp);
+    }
+
+    public void destroyedShipRemove() {
+        if(hp < 1) {
+            gameDispose();
+        }
     }
 
     public void dispose() {
@@ -101,5 +118,37 @@ public abstract class Spaceship {
 
     public void setWarping(boolean warping) {
         this.warping = warping;
+    }
+
+    public SceneManager getSceneManager() {
+        return sceneManager;
+    }
+
+    public void setSceneManager(SceneManager sceneManager) {
+        this.sceneManager = sceneManager;
+    }
+
+    public boolean isShooting() {
+        return shooting;
+    }
+
+    public void setShooting(boolean shooting) {
+        this.shooting = shooting;
+    }
+
+    public float getMaxSpeed() {
+        return maxSpeed;
+    }
+
+    public void setMaxSpeed(float maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
     }
 }
