@@ -39,7 +39,7 @@ public class WeaponSystem extends Spaceship {
         
         for(Projectile projectile : temp) {
             projectiles.remove(projectile);
-            projectile.dispose();
+            projectile.gameDispose();
         }
     }
 

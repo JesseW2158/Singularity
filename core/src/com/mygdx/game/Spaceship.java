@@ -36,17 +36,13 @@ public abstract class Spaceship {
         weaponSystem = new WeaponSystem();
     }
 
-    public void gameDispose() {
-        Matrix4 temp = new Matrix4();
-        Vector3 trash = new Vector3(1_000_000_000, 1_000_000_000, 1_000_000_000);
-
-        temp.translate(trash);
-        scene.modelInstance.transform.set(temp);
-    }
-
     public void destroyedShipRemove() {
         if(hp < 1) {
-            gameDispose();
+            Matrix4 temp = new Matrix4();
+            Vector3 trash = new Vector3(1_000_000_000, 1_000_000_000, 1_000_000_000);
+
+            temp.translate(trash);
+            scene.modelInstance.transform.set(temp);
         }
     }
 

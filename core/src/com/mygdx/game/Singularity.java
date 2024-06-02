@@ -17,7 +17,6 @@ import net.mgsx.gltf.scene3d.attributes.PBRTextureAttribute;
 import net.mgsx.gltf.scene3d.lights.DirectionalLightEx;
 import net.mgsx.gltf.scene3d.scene.Scene;
 import net.mgsx.gltf.scene3d.scene.SceneManager;
-import net.mgsx.gltf.scene3d.scene.SceneSkybox;
 import net.mgsx.gltf.scene3d.utils.IBLBuilder;
 
 public class Singularity extends Game {
@@ -30,7 +29,6 @@ public class Singularity extends Game {
 	private Cubemap environmentCubemap;
 	private Cubemap specularCubemap;
 	private Texture brdfLUT;
-	private SceneSkybox skybox;
 	private DirectionalLightEx light;
 
 	private ArrayList<Enemy> enemies = new ArrayList<>();
@@ -42,12 +40,13 @@ public class Singularity extends Game {
 		// create scene
 		sceneManager = new SceneManager();
 		player = new Player();
-		//creating and adding player to world
-		player.create(sceneManager);
-		sceneManager.addScene(player.getScene());
 
 		spawnPlanets();
 		spawnEnemies();
+		
+		//creating and adding player to world
+		player.create(sceneManager, enemies);
+		sceneManager.addScene(player.getScene());
 
 		camera = new GameCamera();
 
@@ -75,10 +74,6 @@ public class Singularity extends Game {
 		sceneManager.environment.set(new PBRTextureAttribute(PBRTextureAttribute.BRDFLUTTexture, brdfLUT));
 		sceneManager.environment.set(PBRCubemapAttribute.createSpecularEnv(specularCubemap));
 		sceneManager.environment.set(PBRCubemapAttribute.createDiffuseEnv(diffuseCubemap));
-
-		// setup skybox
-		skybox = new SceneSkybox(environmentCubemap);
-		sceneManager.setSkyBox(skybox);
 	}
 
 	@Override
@@ -89,6 +84,12 @@ public class Singularity extends Game {
 	@Override
 	public void render() {
 		float deltaTime = Gdx.graphics.getDeltaTime();
+
+		if(enemies.size() < 1) {
+			spawnEnemies();
+		}
+
+		planetCollision();
 
 		//Basically like setting keylistener to player
 		Gdx.input.setInputProcessor(player);
@@ -118,7 +119,6 @@ public class Singularity extends Game {
 		diffuseCubemap.dispose();
 		specularCubemap.dispose();
 		brdfLUT.dispose();
-		skybox.dispose();
 	}
 
 	private void spawnPlanets() {
@@ -137,12 +137,23 @@ public class Singularity extends Game {
 		}
 	}
 
+	private void planetCollision() {
+		for(Scene planet : planets) {
+			Vector3 temp = new Vector3();
+			temp = planet.modelInstance.transform.getTranslation(temp);
+			if(player.getCurrPos().dst(temp) < 1_850f) {
+				player.hp = 0;
+			}
+		}
+
+	}
+
 	private void spawnEnemies() {
 		Matrix4 worldPos = new Matrix4();
 		worldPos.translate(new Vector3((float)(Math.random() * 25_000), (float)(Math.random() * 25_000), (float)(Math.random() * 25_000)));
 
 		for(int i = 0; i < (float)(Math.random() * 5) + 5; i++) {
-			enemies.add(new Enemy(player.playerTransform));
+			enemies.add(new Enemy(worldPos));
 		}
 		
 		for(Enemy enemy : enemies) {

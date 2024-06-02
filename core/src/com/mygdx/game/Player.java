@@ -1,5 +1,7 @@
 package com.mygdx.game;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
@@ -8,8 +10,9 @@ import com.badlogic.gdx.math.Vector3;
 import net.mgsx.gltf.scene3d.scene.SceneManager;
 
 public class Player extends Spaceship implements InputProcessor {
-    @Override
-    public void create(SceneManager sceneManager) {
+    private ClosestEnemy targettingArrow;
+
+    public void create(SceneManager sceneManager, ArrayList<Enemy> enemies) {
         super.create(sceneManager);
         
         targPos.z += 5000;
@@ -18,10 +21,15 @@ public class Player extends Spaceship implements InputProcessor {
 		scene.modelInstance.transform.set(playerTransform);
 		scene.modelInstance.transform.getTranslation(currPos);
 		targPos.set(0, 0, 0);
+
+        targettingArrow = new ClosestEnemy(sceneManager, this, enemies);
+        targettingArrow.create();
     }
 
     public void handleInput(float deltaTime) {
         playerTransform = scene.modelInstance.transform;
+
+        targettingArrow.gameDispose();
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
 			Gdx.app.exit();
@@ -89,6 +97,9 @@ public class Player extends Spaceship implements InputProcessor {
 		scene.modelInstance.transform.set(playerTransform);
 		scene.modelInstance.transform.getTranslation(currPos);
 		targPos.set(0, 0, 0);
+        
+        targettingArrow.create();
+        targettingArrow.render();
 
         destroyedShipRemove();
     }

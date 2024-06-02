@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.utils.FirstPersonCameraController;
 import com.badlogic.gdx.math.Vector3;
@@ -69,6 +70,19 @@ public class GameCamera {
 		perspectiveCamera.lookAt(player.getCurrPos());
 		perspectiveCamera.update();
 	}
+    
+    public void handleInput() {
+        if(Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
+            switch (cameraMode) {
+                case FREE_LOOK:
+                    cameraMode = CameraMode.CLOSEST_TARGET;
+                    break;
+                default:
+                    cameraMode = CameraMode.FREE_LOOK;
+                    break;
+            }
+        }
+    }
 
     //GETTERS AND SETTERS
 
