@@ -98,10 +98,12 @@ public class Singularity extends Game {
 	public void render() {
 		float deltaTime = Gdx.graphics.getDeltaTime();
 
+		//if all enemies are gone
 		if(enemies.size() < 1) {
 			spawnEnemies();
 		}
 
+		//checks for ship colliding with planet
 		planetCollision();
 
 		//Basically like setting keylistener to player
@@ -119,12 +121,14 @@ public class Singularity extends Game {
 	private void removeDeadEnemies() {
 		ArrayList<Enemy> temp = new ArrayList<>();
 
+		//checks if any enemies are "dead"
 		for(Enemy enemy : enemies) {
 			if(enemy.getWeaponSystem().isDead()) {
 				temp.add(enemy);
 			}
 		}
 
+		//removes dead enemies from arraylist enemies
 		for(Enemy enemy : temp) {
 			enemy.weaponSystem.setDead(true);
 			enemy.getWeaponSystem().render(temp, sceneManager, false);
@@ -142,7 +146,7 @@ public class Singularity extends Game {
 		}
 	}
 
-	@Override
+	@Override //disposes of objects
 	public void dispose() {
 		sceneManager.dispose();
 		player.dispose();
@@ -153,11 +157,14 @@ public class Singularity extends Game {
 		// skybox.dispose();
 	}
 
+	//spawns the planets
 	private void spawnPlanets() {
+		//spawns between 1 - 15 planets with 3 different designs
 		for(int i = 0; i < (float)(Math.random()) * 15 + 1; i++) {
 			planets.add(new Scene(new GLTFLoader().load(Gdx.files.internal("models\\Planet" + (int)(Math.random() * 3 + 1) + ".gltf")).scene));
 		}
 
+		//adds all created plane to world in random positions
 		for(Scene planet : planets) {
 			sceneManager.addScene(planet);
 
@@ -175,18 +182,20 @@ public class Singularity extends Game {
 	}
 
 	private void planetCollision() {
+		//cycles through all planets to see if player has collided with one of them
 		for(Scene planet : planets) {
 			Vector3 temp = new Vector3();
 			temp = planet.modelInstance.transform.getTranslation(temp);
 
-			if(player.getCurrPos().dst(temp) < 1_000f) {
+			//if the distance between the ship and the planet is 1005 feet or less, then player has collided with planet
+			if(player.getCurrPos().dst(temp) < 1_005f) {
 				player.hp = 0;
 			}
 		}
 
 	}
 
-	private void spawnEnemies() {		
+	private void spawnEnemies() { //spawns enemies in random places around the world in clusters
 		Matrix4 worldPos = new Matrix4();
 		worldPos.translate(new Vector3((float)(Math.random() * 25_000), (float)(Math.random() * 25_000), (float)(Math.random() * 25_000)));
 

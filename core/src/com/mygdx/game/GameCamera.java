@@ -1,7 +1,6 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.utils.FirstPersonCameraController;
 import com.badlogic.gdx.math.Vector3;
@@ -24,17 +23,18 @@ public class GameCamera {
     private PerspectiveCamera perspectiveCamera;
 	private FirstPersonCameraController cameraController;
 
-    public GameCamera() {
+    public GameCamera() { //creates camera
         perspectiveCamera = new PerspectiveCamera(60f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        //sets near and far clipping
 		perspectiveCamera.near = 10f;
 		perspectiveCamera.far = 10000000;
 		perspectiveCamera.position.set(0, 0, 4f);
 
 		cameraController = new FirstPersonCameraController(perspectiveCamera);
-		Gdx.input.setInputProcessor(cameraController);
+		Gdx.input.setInputProcessor(cameraController); //inputs get routed to cameraController
     }
 
-    public void calculateCameraPosition(Vector3 currPos, float horizontalDistance, float verticalDistance) {
+    public void calculateCameraPosition(Vector3 currPos, float horizontalDistance, float verticalDistance) { //calculates new camera position based on new positioning given from previous calculations
     	float offsetX = (float) (horizontalDistance * Math.sin(Math.toRadians(angleAroundPlayer)));
         float offsetZ = (float) (horizontalDistance * Math.cos(Math.toRadians(angleAroundPlayer)));
 
@@ -43,21 +43,21 @@ public class GameCamera {
 		perspectiveCamera.position.y = currPos.y + verticalDistance;
 	}
 
-    public void calculateAngleAroundPlayer() {
+    public void calculateAngleAroundPlayer() { //gets input change on the x axis and multiplies it by a factor before changing angleAroundPlayer
         float angleChange = Gdx.input.getDeltaX() * CAMERA_ANGLE_AROUND_PLAYER_FACTOR;  
         angleAroundPlayer -= angleChange;
 	}
 
-    public void calculatePitch() {
+    public void calculatePitch() { //gets input change on the y axis and multiplies it by a factor before changing camPitch
 		float pitchChange = Gdx.input.getDeltaY() * CAMERA_PITCH_FACTOR;
 		camPitch -= pitchChange;
 	}
 
-    public float calculateVerticalDistance() {
+    public float calculateVerticalDistance() { //gets new vertical distance
 		return (float) (distanceFromPlayer * Math.sin(Math.toRadians(camPitch)));
 	}
 
-	public float calculateHorizontalDistance() {
+	public float calculateHorizontalDistance() { //gets new horizontal distance
 		return (float) (distanceFromPlayer * Math.cos(Math.toRadians(camPitch)));
 	}
 
@@ -66,23 +66,10 @@ public class GameCamera {
 		calculateAngleAroundPlayer();
         calculateCameraPosition(player.getCurrPos(), calculateHorizontalDistance(), calculateVerticalDistance());
 
-		perspectiveCamera.up.set(Vector3.Y);
-		perspectiveCamera.lookAt(player.getCurrPos());
-		perspectiveCamera.update();
+		perspectiveCamera.up.set(Vector3.Y); //tells camera where the up axis is
+		perspectiveCamera.lookAt(player.getCurrPos()); //locks camera onto player
+		perspectiveCamera.update(); //updates camera for rendering
 	}
-    
-    public void handleInput() {
-        if(Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
-            switch (cameraMode) {
-                case FREE_LOOK:
-                    cameraMode = CameraMode.CLOSEST_TARGET;
-                    break;
-                default:
-                    cameraMode = CameraMode.FREE_LOOK;
-                    break;
-            }
-        }
-    }
 
     //GETTERS AND SETTERS
 

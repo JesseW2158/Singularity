@@ -36,7 +36,7 @@ public abstract class Spaceship {
         weaponSystem = new WeaponSystem();
     }
 
-    public void destroyedShipRemove() {
+    public void destroyedShipRemove() { //removes destroyed ship by moving them far away
         if(hp < 1) {
             Matrix4 temp = new Matrix4();
             Vector3 trash = new Vector3(1_000_000_000, 1_000_000_000, 1_000_000_000);

@@ -19,13 +19,10 @@ public class Projectile {
 
     private float time = 0;
 
-    private static int projectileNum = 0;
-
     public Projectile() {
-        projectileNum++;
     }
 
-    public void create(Spaceship ship, SceneManager sceneManager) {
+    public void create(Spaceship ship, SceneManager sceneManager) { //creating the arrow and setting it to the same orientation and position as the ship
         sceneAsset = new GLTFLoader().load(Gdx.files.internal("models\\laser.gltf"));
         scene = new Scene(sceneAsset.scene);
         sceneManager.addScene(scene);
@@ -40,7 +37,7 @@ public class Projectile {
         targPos.set(0, 0, 0);
     }
 
-    public void render() {
+    public void render() { //renders updated arrow pos and then updates it again
         time += 1;
 
         targPos.z += 15f;
@@ -51,7 +48,7 @@ public class Projectile {
 		targPos.set(0, 0, 0);
     }
 
-    public void gameDispose() {
+    public void gameDispose() { //disposes of projectile by moving it far away
         Matrix4 temp = new Matrix4();
         Vector3 trash = new Vector3(1_000_000_000, 1_000_000_000, 1_000_000_000);
 
@@ -61,7 +58,7 @@ public class Projectile {
         isDisposed = true;
     }
 
-    public boolean hasCollided(Spaceship ship) {
+    public boolean hasCollided(Spaceship ship) { //checks if projectile has collided with a ship
         if(Math.abs(ship.getCurrPos().dst(this.currPos)) < 3f) {
             return true;
         }
@@ -69,13 +66,7 @@ public class Projectile {
         return false;
     }
 
-    public static int getProjectileNum() {
-        return projectileNum;
-    }
-
-    public static void setProjectileNum(int projectileNum) {
-        Projectile.projectileNum = projectileNum;
-    }
+    //GETTERS AND SETTERS
 
     public Scene getScene() {
         return scene;

@@ -34,7 +34,7 @@ public class ClosestEnemy {
         worldTransform = new Matrix4(player.getScene().modelInstance.transform);
     }
 
-    public void create() {
+    public void create() { //creates a pointer as a green rectangle
         ModelBuilder modelBuilder = new ModelBuilder();
 		modelBuilder.begin();
 
@@ -43,13 +43,14 @@ public class ClosestEnemy {
         MeshPartBuilder builder = modelBuilder.part("Target Path", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, material);
         BoxShapeBuilder.build(builder, 0, 0, 0, 1f, 1f, 5f);
 
+        //adds the newly created arrow to the game
         arrow = new ModelInstance(modelBuilder.end());
 		sceneManager.addScene(new Scene(arrow));
 
         worldTransform = new Matrix4(player.getScene().modelInstance.transform);
     }
 
-    public void render() {
+    public void render() { //finds the nearest enemy and points towards their location
         int closestEnemy = 0;
         float closestEnemyDist = Float.MAX_VALUE;
 
@@ -64,11 +65,12 @@ public class ClosestEnemy {
         }
 
         worldTransform.rotateTowardTarget(enemies.get(closestEnemy).getCurrPos(), Vector3.Y);
+        //rotates 180 degrees because rotate uses 0,0,0 as its origin instead of my intended origin
         worldTransform.rotate(Vector3.X, 180).translate(new Vector3(0, 0, 5f));
         arrow.transform.set(worldTransform);
     }
 
-    public void gameDispose() {
+    public void gameDispose() {//moves the object far away as a "dispose" because otherwise it would crash
         Matrix4 temp = new Matrix4();
         Vector3 trash = new Vector3(1_000_000_000, 1_000_000_000, 1_000_000_000);
 
