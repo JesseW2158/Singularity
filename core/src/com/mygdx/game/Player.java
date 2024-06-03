@@ -52,27 +52,27 @@ public class Player extends Spaceship implements InputProcessor {
 		}
         
         if(Gdx.input.isKeyPressed(Input.Keys.W) && !warping) {
-			scene.modelInstance.transform.rotate(Vector3.X, -2f);
+			scene.modelInstance.transform.rotate(Vector3.X, -5f);
 		}
 
 		if(Gdx.input.isKeyPressed(Input.Keys.A) && !warping) {
-			scene.modelInstance.transform.rotate(Vector3.Y, 1f);
-		}
+			scene.modelInstance.transform.rotate(Vector3.Y, 3f);
+        }
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.S) && !warping) {
-			scene.modelInstance.transform.rotate(Vector3.X, 2f);
+			scene.modelInstance.transform.rotate(Vector3.X, 5f);
 		}
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.D) && !warping) {
-			scene.modelInstance.transform.rotate(Vector3.Y, -1f);
+			scene.modelInstance.transform.rotate(Vector3.Y, -3f);
 		}
 
 		if(Gdx.input.isKeyPressed(Input.Keys.Q) && !warping) {
-			scene.modelInstance.transform.rotate(Vector3.Z, -3f);
+			scene.modelInstance.transform.rotate(Vector3.Z, -5f);
 		}
 
 		if(Gdx.input.isKeyPressed(Input.Keys.E) && !warping) {
-			scene.modelInstance.transform.rotate(Vector3.Z, 3f);
+			scene.modelInstance.transform.rotate(Vector3.Z, 5f);
 		}
 
         if(warping) {
@@ -89,6 +89,11 @@ public class Player extends Spaceship implements InputProcessor {
 
         if(shooting && !warping) {
             weaponSystem.createLasers(sceneManager, this);
+        }
+
+        if(currPos.dst(0, 0, 0) > 45000) {
+            speed = 0;
+            targPos.set(targPos.x - 50, targPos.y - 50, targPos.z - 50);
         }
 
         targPos.z += speed * deltaTime;

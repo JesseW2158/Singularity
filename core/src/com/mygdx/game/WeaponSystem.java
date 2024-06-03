@@ -7,6 +7,7 @@ import net.mgsx.gltf.scene3d.scene.SceneManager;
 public class WeaponSystem extends Spaceship {
     private boolean inRange = false;
     private boolean inCombat = false;
+    private boolean dead = false;
 
     ArrayList<Projectile> projectiles = new ArrayList<>();
 
@@ -23,13 +24,13 @@ public class WeaponSystem extends Spaceship {
         for(Projectile projectile : projectiles) {
             if(!projectile.isDisposed() && projectile.getTime() > 120f) {
                 temp.add(projectile);
-            } else {
+            } else if(!dead) {
                 projectile.render();
                 
                 for(Spaceship ship : ships) {
-                    if(ship instanceof Player) {
-                        System.out.println(ship.hp);
-                    }
+                    // if(ship instanceof Player) {
+                    //     System.out.println(ship.hp);
+                    // }
                     if(projectile.hasCollided(ship)) {
                         ship.setHp(ship.getHp() - 1);
                     }
@@ -40,6 +41,13 @@ public class WeaponSystem extends Spaceship {
         for(Projectile projectile : temp) {
             projectiles.remove(projectile);
             projectile.gameDispose();
+        }
+
+        if(dead) {
+            for(Projectile projectile : projectiles) {
+                projectile.gameDispose();
+            }
+            projectiles.clear();
         }
     }
 
@@ -65,5 +73,13 @@ public class WeaponSystem extends Spaceship {
 
     public void setProjectiles(ArrayList<Projectile> projectiles) {
         this.projectiles = projectiles;
+    }
+
+    public boolean isDead() {
+        return dead;
+    }
+
+    public void setDead(boolean dead) {
+        this.dead = dead;
     }
 }

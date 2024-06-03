@@ -42,6 +42,7 @@ public abstract class Spaceship {
             Vector3 trash = new Vector3(1_000_000_000, 1_000_000_000, 1_000_000_000);
 
             temp.translate(trash);
+            weaponSystem.setDead(true);
             scene.modelInstance.transform.set(temp);
         }
     }

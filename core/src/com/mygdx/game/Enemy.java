@@ -17,6 +17,7 @@ public class Enemy extends Spaceship {
 
     public void create(SceneManager sceneManager, Player ship) {
         super.create(sceneManager);
+        hp = 1;
 
         targPos = new Vector3((float)(Math.random() * 300), (float)(Math.random() * 300), (float)(Math.random() * 300));
 
